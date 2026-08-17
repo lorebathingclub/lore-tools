@@ -126,9 +126,9 @@
     <div id="sections"></div>
 
     <div class="card">
-      <div class="section-title" style="margin:-14px -16px 10px;">Anything Else Flagged <span style="color:#ffb3a3;">*</span></div>
-      <div style="font-size:12px;color:#8a8477;margin:-4px 0 8px;">Write "None" if nothing to flag.</div>
-      <textarea id="finalNotes" placeholder="Anything not covered above, or write None"></textarea>
+      <div class="section-title" style="margin:-14px -16px 10px;">Anything Else Flagged</div>
+      <div style="font-size:12px;color:#8a8477;margin:-4px 0 8px;">Optional.</div>
+      <textarea id="finalNotes" placeholder="Anything not covered above"></textarea>
     </div>
 
     <button class="submit-btn" onclick="submitForm()">Submit &amp; Email Management</button>
@@ -265,12 +265,10 @@ function validateForm(){
   const dateEl = document.getElementById('date');
   const shiftEl = document.getElementById('shift');
   const managerEl = document.getElementById('manager');
-  const notesEl = document.getElementById('finalNotes');
 
   if(!dateEl.value){ dateEl.classList.add('error'); valid=false; firstInvalid = firstInvalid || dateEl; }
   if(!shiftEl.value){ shiftEl.classList.add('error'); valid=false; firstInvalid = firstInvalid || shiftEl; }
   if(!managerEl.value.trim()){ managerEl.classList.add('error'); valid=false; firstInvalid = firstInvalid || managerEl; }
-  if(!notesEl.value.trim()){ notesEl.classList.add('error'); valid=false; firstInvalid = firstInvalid || notesEl; }
 
   document.querySelectorAll('.item').forEach(item=>{
     const status = item.dataset.status;
@@ -333,7 +331,7 @@ function submitForm(){
     body += `\n`;
   });
 
-  body += `FLAGGED\n${finalNotes}`;
+  body += `FLAGGED\n${finalNotes || 'None'}`;
 
   const subject = `${shift} Opening Checklist ${date}${issueCount ? ' — ' + issueCount + ' issue(s)' : ''}`;
   lastMailtoUrl = `mailto:${MANAGEMENT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
