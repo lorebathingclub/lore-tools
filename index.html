@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Lore Bathing Club — Opening Checklist</title>
+<title>Lore Bathing Club: Opening Checklist</title>
 <style>
   :root{
     --ink:#1c1c1a;
@@ -137,7 +137,7 @@
   <div class="done-screen" id="doneScreen">
     <div class="check">✓</div>
     <h2>Opening Checklist Sent</h2>
-    <p id="doneSubtext">Draft opened in your email app — hit send to deliver to management.</p>
+    <p id="doneSubtext">Draft opened in your email app, hit send to deliver to management.</p>
     <button class="secondary-btn" onclick="reopenMail()">Reopen Email Draft</button>
     <button class="secondary-btn" onclick="startNew()">Start New Opening Checklist</button>
   </div>
@@ -152,29 +152,48 @@ const sections = [
   {
     title: "Opening",
     rows: [
-      { type:'item', text:'Turn on both saunas', cond:'85 for main sauna. Weekdays: move to 82 until sauna masters arrive' },
-      { type:'item', text:'Turn on lights to levels marked on the panels', cond:'AM only. Lights in men\u2019s room set to level 3, front stairway lights on. All pool lights OFF except the two dim strip lights over the benches' },
-      { type:'item', text:'Make coffee (150g, 10.25 grind)', cond:'AM only' },
+      { type:'item', text:'Turn on both saunas', cond:'85 for main sauna' },
+      { type:'item', text:'Turn on lights to levels marked on the panels in boiler room', cond:'AM only' },
       { type:'group', text:'Set music' },
       { type:'item', text:'Reception from iPad in holder (the Row monthly playlist, Lore reception, etc)', cond:'59 volume', indent:true },
       { type:'item', text:'Pool from iPad in case (741hz or 541hz)', cond:'69 volume', indent:true },
-      { type:'item', text:'Sauna from desktop (AFG1 or AFG2)', cond:'38 volume if less people, 42 if more', indent:true },
-      { type:'item', text:'Assign staff stations (check Homebase)', cond:'If AM, front desk person checks their locker room every 15 min, same with pool person' },
+      { type:'item', text:'Sauna from desktop (AFG1 or AFG2)', cond:'38 volume if less than 10 people, 42 if more', indent:true },
       { type:'group', text:'Walkthrough of space' },
-      { type:'item', text:'Set copal', indent:true },
-      { type:'item', text:'Are the pool deck lights on?', cond:'Switches next to hammam benches both on, set as low as possible while still on. No other lights on pool deck', indent:true },
-      { type:'item', text:'Is the vacuum out of the pool?', indent:true },
-      { type:'item', text:'Are the sauna benches down?', indent:true },
-      { type:'item', text:'Is the IR rug laid out?', indent:true },
-      { type:'item', text:'Are there dirty towels out / in hampers / around?', indent:true },
-      { type:'item', text:'How does the front of house look?', cond:'Are the windows clean? Is there trash out front?', indent:true },
+      { type:'item', text:'Set copal in cafe', indent:true },
+      { type:'item', text:'Set copal in front stairwell', indent:true },
+      { type:'item', text:'Check front stairwell light', cond:'Set to level marked by arrow', indent:true },
+      { type:'item', text:'Walk through men\u2019s room, check light', cond:'Set to level marked by arrow. Note dirty towels to flag to attendants to remove before opening', indent:true },
+      { type:'item', text:'Check women\u2019s room as well', cond:'Note dirty towels to flag to attendants to remove before opening', indent:true },
+      { type:'item', text:'Set copal in front of the pool testing room', indent:true },
+      { type:'item', text:'Check that the IR rug is laid out, the IR is on, lights in the IR are on, and lights in the cellar behind the IR are on', indent:true },
+      { type:'item', text:'Check for dirty towels in the back shower room', cond:'Flag to attendants to remove before opening', indent:true },
+      { type:'item', text:'Walk upstairs, set copal on the right side of the ledge (not the middle)', indent:true },
+      { type:'item', text:'Note any smelly rugs for switch out by attendants', indent:true },
+      { type:'item', text:'Make sure the back stairs don\u2019t have an extra light on', cond:'Light above them is set in the small closet across from the cold room', indent:true },
+      { type:'item', text:'Check for dirty towels in front of bottle fill', cond:'Flag to attendants to remove before opening', indent:true },
+      { type:'item', text:'Check that bottle fill is running well; change filter if not', cond:'Ask if unsure how', indent:true },
+      { type:'item', text:'Make sure pool benches are down', cond:'Tell attendants if not', indent:true },
+      { type:'item', text:'Check that hammam benches are set to 104', cond:'Turn on for hammam at 6AM. "Return to schedule" if not', indent:true },
+      { type:'item', text:'Check that the strips above the hammam benches and the long strip above the pool are set to the arrows', cond:'As low as possible while still on', indent:true },
+      { type:'item', text:'Check that these are the only lights on, other than the light in the pool', cond:'Any other overhead needs to be off', indent:true },
+      { type:'item', text:'Make sure the small trash can is out with a fresh bag', cond:'Under the shelf in front of the sauna', indent:true },
+      { type:'item', text:'Make sure all music is playing throughout the space as set', indent:true },
+      { type:'item', text:'If there\u2019s any smell in front of the sauna, put a copal above the water fountain', indent:true },
+      { type:'item', text:'Make sure the lights in the sauna room are set as instructed above', indent:true },
+      { type:'item', text:'Check that the fridge light is on', indent:true },
+      { type:'item', text:'Check that cafe sconces are on', cond:'Dimmers on switches below sconces are all the way down, switches themselves off', indent:true },
+      { type:'item', text:'Check that the lamp above the water fountain is on', indent:true },
+      { type:'item', text:'Check that drinks are stocked', indent:true },
+      { type:'item', text:'Check that the front door is clean', indent:true },
       { type:'item', text:'Test pool water' },
       { type:'item', text:'Unlock office upstairs + turn on lights' },
       { type:'item', text:'Flag to staff what needs reset in locker rooms + pool' },
       { type:'group', text:'At shift start' },
-      { type:'item', text:'Fill water bucket with filtered water, put a scoop on each burner (not middle burner)', cond:'Weekday mornings only. 1/2 scoop if using the larger ladle. Ladles are on the sauna master station in the mechanical room — put it back when done. Do not leave water or bucket in the sauna', indent:true },
+      { type:'item', text:'Fill water bucket with filtered water, put a scoop on each burner (not middle burner)', cond:'Weekday mornings only. 1/2 scoop if using the larger ladle. Ladles are on the sauna master station in the mechanical room, put it back when done. Do not leave water or bucket in the sauna', indent:true },
       { type:'item', text:'Pre-shift meeting', cond:'Share any info about today\u2019s shift, flag anything noticed during walkthrough, determine break times for any shifts longer than 6 hours (should be all)', indent:true },
-      { type:'item', text:'Update strike sheet + warnings', cond:'1 strike if 15+ min late, 1 warning if 5\u201315 min late. Verbally communicate to team member', indent:true },
+      { type:'item', text:'Update strike sheet + warnings', cond:'1 strike if 15+ min late, 1 warning if 5 to 15 min late. Verbally communicate to team member', indent:true },
+      { type:'item', text:'Make coffee (150g, 10.25 grind)', cond:'AM only' },
+      { type:'item', text:'Move sauna temp to 82 until sauna masters arrive', cond:'Weekdays only, at 7am' },
     ]
   }
 ];
@@ -196,7 +215,7 @@ function renderSections(){
       if(row.type === 'group'){
         const g = document.createElement('div');
         g.className = 'group-label';
-        g.innerHTML = row.text + (row.cond ? ` <span class="cond">— ${row.cond}</span>` : '');
+        g.innerHTML = row.text + (row.cond ? ` <span class="cond">: ${row.cond}</span>` : '');
         card.appendChild(g);
       } else {
         itemCount++;
@@ -204,9 +223,9 @@ function renderSections(){
         const item = document.createElement('div');
         item.className = 'item' + (row.indent ? ' indent' : '') + (idx===0 ? ' first' : '');
         item.dataset.itemId = id;
-        item.dataset.label = row.text + (row.cond ? ' — ' + row.cond : '');
+        item.dataset.label = row.text + (row.cond ? ': ' + row.cond : '');
         item.innerHTML = `
-          <label class="item-label">${row.text}${row.cond ? ` <span class="cond">— ${row.cond}</span>` : ''}</label>
+          <label class="item-label">${row.text}${row.cond ? ` <span class="cond">: ${row.cond}</span>` : ''}</label>
           <div class="status-btns">
             <button type="button" class="status-btn ok" onclick="setStatus('${id}',this)">✓</button>
             <button type="button" class="status-btn issue" onclick="setStatus('${id}',this,true)">!</button>
@@ -305,7 +324,7 @@ async function submitForm(){
   const manager = document.getElementById('manager').value.trim();
   const finalNotes = document.getElementById('finalNotes').value.trim();
 
-  let body = `${shift} Opening Checklist — ${date}\nManager: ${manager}\n\n`;
+  let body = `${shift} Opening Checklist, ${date}\nManager: ${manager}\n\n`;
   let issueCount = 0;
 
   document.querySelectorAll('.section').forEach(sec=>{
@@ -333,7 +352,7 @@ async function submitForm(){
 
   body += `FLAGGED\n${finalNotes || 'None'}`;
 
-  const subject = `${shift} Opening Checklist ${date}${issueCount ? ' — ' + issueCount + ' issue(s)' : ''}`;
+  const subject = `${shift} Opening Checklist ${date}${issueCount ? ', ' + issueCount + ' issue(s)' : ''}`;
   lastMailtoUrl = `mailto:${MANAGEMENT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
   const submitBtn = document.querySelector('.submit-btn');
@@ -356,13 +375,13 @@ async function submitForm(){
 
     if(!res.ok) throw new Error('Formspree request failed');
 
-    document.getElementById('doneSubtext').textContent = 'Sent straight to management — no need to open your email app.';
+    document.getElementById('doneSubtext').textContent = 'Sent straight to management, no need to open your email app.';
     document.getElementById('formScreen').classList.add('hide');
     document.getElementById('doneScreen').classList.add('show');
   } catch(err){
     // fallback: open a pre-filled email draft if the silent send fails
     window.location.href = lastMailtoUrl;
-    document.getElementById('doneSubtext').textContent = 'Couldn\u2019t send automatically — draft opened in your email app, hit send to deliver it.';
+    document.getElementById('doneSubtext').textContent = 'Couldn\u2019t send automatically, draft opened in your email app, hit send to deliver it.';
     document.getElementById('formScreen').classList.add('hide');
     document.getElementById('doneScreen').classList.add('show');
   } finally {
