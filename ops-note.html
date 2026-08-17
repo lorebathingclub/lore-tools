@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Lore Bathing Club — Ops Note</title>
+<title>Lore Bathing Club: Ops Note</title>
 <style>
   :root{
     --ink:#1c1c1a;
@@ -149,9 +149,9 @@
 
     <div class="card">
       <h2>Guest Incidents / Flags</h2>
-      <div class="hint" style="margin-bottom:8px;">Anything a manager needs to know about a specific guest — complaint, safety concern, membership flag, etc.</div>
+      <div class="hint" style="margin-bottom:8px;">Anything a manager needs to know about a specific guest or member: complaint, safety concern, membership flag, becoming a regular, etc.</div>
       <div id="incidentsList"></div>
-      <button class="add-btn" onclick="addRow('incidentsList','e.g. Guest name — what happened, any follow-up needed')">+ Add incident</button>
+      <button class="add-btn" onclick="addRow('incidentsList','e.g. Guest or member name: what happened, any follow-up needed')">+ Add incident</button>
     </div>
 
     <div class="card">
@@ -167,10 +167,10 @@
     </div>
 
     <div class="card">
-      <h2>Staff / Member Notes</h2>
-      <div class="hint" style="margin-bottom:8px;">Optional — anything worth flagging on a staff member or regular.</div>
+      <h2>Staff Issues</h2>
+      <div class="hint" style="margin-bottom:8px;">Optional. Anything worth flagging about a staff member.</div>
       <div id="staffList"></div>
-      <button class="add-btn" onclick="addRow('staffList','e.g. Tomas Cabezon — becoming a regular, consider for waitlist')">+ Add note</button>
+      <button class="add-btn" onclick="addRow('staffList','e.g. Staff name: called out sick, no coverage found yet')">+ Add note</button>
     </div>
 
     <div class="card" id="dailyNumbersCard" style="display:none;">
@@ -208,7 +208,7 @@
   <div class="done-screen" id="doneScreen">
     <div class="check">✓</div>
     <h2>Ops Note Sent</h2>
-    <p id="doneSubtext">Draft opened in your email app — hit send to deliver to management.</p>
+    <p id="doneSubtext">Draft opened in your email app, hit send to deliver to management.</p>
     <button class="secondary-btn" onclick="reopenMail()">Reopen Email Draft</button>
     <button class="secondary-btn" onclick="startNew()">Start New Note</button>
   </div>
@@ -229,7 +229,7 @@ function addRow(listId, placeholder){
 
 // seed one empty row in each repeatable section
 ['incidentsList','maintList','suppliesList','staffList'].forEach(id=>{
-  // start empty, "+ Add" reveals the first row too — keeps the form short by default
+  // start empty, "+ Add" reveals the first row too, keeps the form short by default
 });
 
 function collectRows(listId){
@@ -316,7 +316,7 @@ async function submitForm(){
   const peakTime = document.getElementById('peakTime').value.trim();
   const slowestTime = document.getElementById('slowestTime').value.trim();
 
-  let body = `${shift} Ops Note — ${date}\nManager: ${manager}\n\n`;
+  let body = `${shift} Ops Note, ${date}\nManager: ${manager}\n\n`;
   body += `SUMMARY\n${summary}\n\n`;
 
   body += `GUEST INCIDENTS / FLAGS\n`;
@@ -331,7 +331,7 @@ async function submitForm(){
   body += supplies.length ? supplies.map(i=>'- '+i).join('\n') : '- None';
   body += `\n\n`;
 
-  body += `STAFF / MEMBER NOTES\n`;
+  body += `STAFF ISSUES\n`;
   body += staffNotes.length ? staffNotes.map(i=>'- '+i).join('\n') : '- None';
 
   const hasNumbers = totalSales||totalVisits||peakVolume||peakTime||slowestTime;
@@ -367,12 +367,12 @@ async function submitForm(){
 
     if(!res.ok) throw new Error('Formspree request failed');
 
-    document.getElementById('doneSubtext').textContent = 'Sent straight to management — no need to open your email app.';
+    document.getElementById('doneSubtext').textContent = 'Sent straight to management, no need to open your email app.';
     document.getElementById('formScreen').classList.add('hide');
     document.getElementById('doneScreen').classList.add('show');
   } catch(err){
     window.location.href = lastMailtoUrl;
-    document.getElementById('doneSubtext').textContent = 'Couldn\u2019t send automatically — draft opened in your email app, hit send to deliver it.';
+    document.getElementById('doneSubtext').textContent = 'Couldn\u2019t send automatically, draft opened in your email app, hit send to deliver it.';
     document.getElementById('formScreen').classList.add('hide');
     document.getElementById('doneScreen').classList.add('show');
   } finally {
