@@ -96,6 +96,12 @@
     color:var(--ink);padding:10px 16px;border-radius:8px;font-size:14px;
     cursor:pointer;margin:4px;
   }
+  input.error, textarea.error, select.error{border-color:#a05c4c;background:#fdf3f1;}
+  .error-banner{
+    display:none;background:#fdf3f1;border:1px solid #eac4bb;color:#a05c4c;
+    font-size:13px;padding:10px 12px;border-radius:8px;margin-bottom:14px;
+  }
+  .error-banner.show{display:block;}
 </style>
 </head>
 <body>
@@ -107,15 +113,17 @@
       <p>End-of-Shift Ops Note</p>
     </header>
 
+    <div class="error-banner" id="errorBanner">Please complete the highlighted fields before submitting.</div>
+
     <div class="card">
       <h2>Shift Info</h2>
       <div class="row">
         <div>
-          <label>Date</label>
+          <label>Date <span style="color:#a05c4c;">*</span></label>
           <input type="date" id="date">
         </div>
         <div>
-          <label>Shift</label>
+          <label>Shift <span style="color:#a05c4c;">*</span></label>
           <select id="shift" onchange="toggleDailyNumbers()">
             <option value="">Select...</option>
             <option>AM</option>
@@ -123,12 +131,12 @@
           </select>
         </div>
       </div>
-      <label>Manager</label>
+      <label>Manager <span style="color:#a05c4c;">*</span></label>
       <input type="text" id="manager" placeholder="Name">
     </div>
 
     <div class="card">
-      <h2>Shift Summary</h2>
+      <h2>Shift Summary <span style="color:#a05c4c;">*</span></h2>
       <label>How'd it go? (1–2 sentences, no more)</label>
       <textarea id="summary" placeholder="e.g. Steady day, no major issues."></textarea>
     </div>
@@ -160,7 +168,7 @@
     </div>
 
     <div class="card" id="dailyNumbersCard" style="display:none;">
-      <h2>Daily Numbers <span style="font-weight:400;text-transform:none;color:#8a8477;">(PM only)</span></h2>
+      <h2>Daily Numbers <span style="font-weight:400;text-transform:none;color:#8a8477;">(required for PM)</span></h2>
       <div class="numbers-grid">
         <div>
           <label>Total Sales</label>
@@ -229,14 +237,58 @@ function toggleDailyNumbers(){
   const shift = document.getElementById('shift').value;
   const card = document.getElementById('dailyNumbersCard');
   card.style.display = (shift === 'PM') ? 'block' : 'none';
+  document.getElementById('shift').classList.remove('error');
+}
+
+['date','shift','manager','summary','totalSales','retailSales','totalVisits','peakVolume','peakTime','slowestTime'].forEach(id=>{
+  const el = document.getElementById(id);
+  el.addEventListener('input', function(){ this.classList.remove('error'); });
+  el.addEventListener('change', function(){ this.classList.remove('error'); });
+});
+
+function clearErrors(){
+  document.querySelectorAll('.error').forEach(el=>el.classList.remove('error'));
+  document.getElementById('errorBanner').classList.remove('show');
+}
+
+function validateForm(){
+  clearErrors();
+  let firstInvalid = null;
+  let valid = true;
+
+  const dateEl = document.getElementById('date');
+  const shiftEl = document.getElementById('shift');
+  const managerEl = document.getElementById('manager');
+  const summaryEl = document.getElementById('summary');
+
+  if(!dateEl.value){ dateEl.classList.add('error'); valid=false; firstInvalid=firstInvalid||dateEl; }
+  if(!shiftEl.value){ shiftEl.classList.add('error'); valid=false; firstInvalid=firstInvalid||shiftEl; }
+  if(!managerEl.value.trim()){ managerEl.classList.add('error'); valid=false; firstInvalid=firstInvalid||managerEl; }
+  if(!summaryEl.value.trim()){ summaryEl.classList.add('error'); valid=false; firstInvalid=firstInvalid||summaryEl; }
+
+  if(shiftEl.value === 'PM'){
+    ['totalSales','retailSales','totalVisits','peakVolume','peakTime','slowestTime'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el.value.trim()){ el.classList.add('error'); valid=false; firstInvalid=firstInvalid||el; }
+    });
+  }
+
+  if(!valid){
+    document.getElementById('errorBanner').classList.add('show');
+    if(firstInvalid) firstInvalid.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  return valid;
 }
 
 let lastMailtoUrl = "";
 
 function submitForm(){
-  const date = document.getElementById('date').value || '(no date entered)';
-  const shift = document.getElementById('shift').value || '(shift not selected)';
-  const manager = document.getElementById('manager').value || '(no name entered)';
+  if(!validateForm()) return;
+
+  const date = document.getElementById('date').value;
+  const shift = document.getElementById('shift').value;
+  const manager = document.getElementById('manager').value.trim();
   const summary = document.getElementById('summary').value.trim();
 
   const incidents = collectRows('incidentsList');
@@ -252,7 +304,7 @@ function submitForm(){
   const slowestTime = document.getElementById('slowestTime').value.trim();
 
   let body = `${shift} Ops Note — ${date}\nManager: ${manager}\n\n`;
-  body += `SUMMARY\n${summary || '(none entered)'}\n\n`;
+  body += `SUMMARY\n${summary}\n\n`;
 
   body += `GUEST INCIDENTS / FLAGS\n`;
   body += incidents.length ? incidents.map(i=>'- '+i).join('\n') : '- None';
@@ -300,6 +352,7 @@ function startNew(){
   document.getElementById('date').value='';
   document.getElementById('shift').value='';
   document.getElementById('dailyNumbersCard').style.display = 'none';
+  clearErrors();
   ['incidentsList','maintList','suppliesList','staffList'].forEach(id=>{
     document.getElementById(id).innerHTML='';
   });
