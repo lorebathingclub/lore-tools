@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Lore Bathing Club — Ops Note</title>
+<style>
+  :root{
+    --ink:#1c1c1a;
+    --paper:#faf9f6;
+    --line:#dedad2;
+    --accent:#7a6a53;
+    --accent-dark:#4f4536;
+    --ok:#4c6b4f;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.4;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:28px 20px 80px;}
+  header{margin-bottom:24px;}
+  header h1{font-size:20px;margin:0 0 2px;letter-spacing:0.01em;}
+  header p{margin:0;color:#6b6558;font-size:13px;}
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:18px 18px;
+    margin-bottom:14px;
+  }
+  .card h2{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--accent-dark);
+    margin:0 0 12px;
+    font-weight:600;
+  }
+  .row{display:flex;gap:10px;margin-bottom:10px;}
+  .row > div{flex:1;}
+  label{display:block;font-size:13px;color:#494438;margin-bottom:4px;}
+  input[type=text], input[type=date], input[type=number], textarea, select{
+    width:100%;
+    padding:9px 10px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    font-size:15px;
+    font-family:inherit;
+    background:#fffdfa;
+    color:var(--ink);
+  }
+  textarea{resize:vertical;min-height:56px;}
+  .hint{font-size:12px;color:#8a8477;margin-top:3px;}
+  .repeat-item{display:flex;gap:8px;margin-bottom:8px;align-items:flex-start;}
+  .repeat-item input{flex:1;}
+  .remove-btn{
+    background:none;border:none;color:#a05c4c;font-size:18px;line-height:1;
+    cursor:pointer;padding:6px 4px;
+  }
+  .add-btn{
+    background:none;border:1px dashed var(--line);color:var(--accent-dark);
+    border-radius:7px;padding:7px 10px;font-size:13px;cursor:pointer;width:100%;
+    text-align:left;
+  }
+  .add-btn:hover{border-color:var(--accent);}
+  .numbers-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .submit-btn{
+    width:100%;
+    background:var(--accent-dark);
+    color:#fff;
+    border:none;
+    border-radius:9px;
+    padding:14px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    margin-top:6px;
+  }
+  .submit-btn:active{opacity:0.85;}
+  .done-screen{display:none;text-align:center;padding:40px 10px;}
+  .done-screen.show{display:block;}
+  .form-screen.hide{display:none;}
+  .check{
+    width:46px;height:46px;border-radius:50%;background:var(--ok);
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    font-size:22px;margin:0 auto 14px;
+  }
+  .done-screen h2{font-size:18px;margin:0 0 6px;}
+  .done-screen p{color:#6b6558;font-size:14px;margin:0 0 24px;}
+  .secondary-btn{
+    display:inline-block;background:#fff;border:1px solid var(--line);
+    color:var(--ink);padding:10px 16px;border-radius:8px;font-size:14px;
+    cursor:pointer;margin:4px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="form-screen" id="formScreen">
+    <header>
+      <h1>Lore Bathing Club</h1>
+      <p>End-of-Shift Ops Note</p>
+    </header>
+
+    <div class="card">
+      <h2>Shift Info</h2>
+      <div class="row">
+        <div>
+          <label>Date</label>
+          <input type="date" id="date">
+        </div>
+        <div>
+          <label>Shift</label>
+          <select id="shift">
+            <option value="">Select...</option>
+            <option>AM</option>
+            <option>PM</option>
+          </select>
+        </div>
+      </div>
+      <label>Manager</label>
+      <input type="text" id="manager" placeholder="Name">
+    </div>
+
+    <div class="card">
+      <h2>Shift Summary</h2>
+      <label>How'd it go? (1–2 sentences, no more)</label>
+      <textarea id="summary" placeholder="e.g. Steady day, no major issues."></textarea>
+    </div>
+
+    <div class="card">
+      <h2>Guest Incidents / Flags</h2>
+      <div class="hint" style="margin-bottom:8px;">Anything a manager needs to know about a specific guest — complaint, safety concern, membership flag, etc.</div>
+      <div id="incidentsList"></div>
+      <button class="add-btn" onclick="addRow('incidentsList','e.g. Guest name — what happened, any follow-up needed')">+ Add incident</button>
+    </div>
+
+    <div class="card">
+      <h2>Maintenance / Facility Issues</h2>
+      <div id="maintList"></div>
+      <button class="add-btn" onclick="addRow('maintList','e.g. Leak in rear pool room, bucket placed')">+ Add issue</button>
+    </div>
+
+    <div class="card">
+      <h2>Supplies Running Low</h2>
+      <div id="suppliesList"></div>
+      <button class="add-btn" onclick="addRow('suppliesList','e.g. Waters, coconut waters')">+ Add item</button>
+    </div>
+
+    <div class="card">
+      <h2>Staff / Member Notes</h2>
+      <div class="hint" style="margin-bottom:8px;">Optional — anything worth flagging on a staff member or regular.</div>
+      <div id="staffList"></div>
+      <button class="add-btn" onclick="addRow('staffList','e.g. Tomas Cabezon — becoming a regular, consider for waitlist')">+ Add note</button>
+    </div>
+
+    <div class="card">
+      <h2>Daily Numbers <span style="font-weight:400;text-transform:none;color:#8a8477;">(optional)</span></h2>
+      <div class="numbers-grid">
+        <div>
+          <label>Total Sales</label>
+          <input type="text" id="totalSales" placeholder="$">
+        </div>
+        <div>
+          <label>Retail Sales</label>
+          <input type="text" id="retailSales" placeholder="$">
+        </div>
+        <div>
+          <label>Total Visits</label>
+          <input type="text" id="totalVisits">
+        </div>
+        <div>
+          <label>Peak Volume</label>
+          <input type="text" id="peakVolume" placeholder="e.g. 29 people at 5:50">
+        </div>
+        <div>
+          <label>Peak Time</label>
+          <input type="text" id="peakTime">
+        </div>
+        <div>
+          <label>Slowest Time</label>
+          <input type="text" id="slowestTime">
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="submitForm()">Submit &amp; Email Management</button>
+  </div>
+
+  <div class="done-screen" id="doneScreen">
+    <div class="check">✓</div>
+    <h2>Ops Note Sent</h2>
+    <p id="doneSubtext">Draft opened in your email app — hit send to deliver to management.</p>
+    <button class="secondary-btn" onclick="reopenMail()">Reopen Email Draft</button>
+    <button class="secondary-btn" onclick="startNew()">Start New Note</button>
+  </div>
+
+</div>
+
+<script>
+const MANAGEMENT_EMAIL = "management@lorebathingclub.com";
+
+function addRow(listId, placeholder){
+  const list = document.getElementById(listId);
+  const row = document.createElement('div');
+  row.className = 'repeat-item';
+  row.innerHTML = `<input type="text" placeholder="${placeholder}"><button class="remove-btn" onclick="this.parentElement.remove()">×</button>`;
+  list.appendChild(row);
+  row.querySelector('input').focus();
+}
+
+// seed one empty row in each repeatable section
+['incidentsList','maintList','suppliesList','staffList'].forEach(id=>{
+  // start empty, "+ Add" reveals the first row too — keeps the form short by default
+});
+
+function collectRows(listId){
+  return Array.from(document.querySelectorAll('#'+listId+' input'))
+    .map(i=>i.value.trim())
+    .filter(v=>v.length>0);
+}
+
+let lastMailtoUrl = "";
+
+function submitForm(){
+  const date = document.getElementById('date').value || '(no date entered)';
+  const shift = document.getElementById('shift').value || '(shift not selected)';
+  const manager = document.getElementById('manager').value || '(no name entered)';
+  const summary = document.getElementById('summary').value.trim();
+
+  const incidents = collectRows('incidentsList');
+  const maint = collectRows('maintList');
+  const supplies = collectRows('suppliesList');
+  const staffNotes = collectRows('staffList');
+
+  const totalSales = document.getElementById('totalSales').value.trim();
+  const retailSales = document.getElementById('retailSales').value.trim();
+  const totalVisits = document.getElementById('totalVisits').value.trim();
+  const peakVolume = document.getElementById('peakVolume').value.trim();
+  const peakTime = document.getElementById('peakTime').value.trim();
+  const slowestTime = document.getElementById('slowestTime').value.trim();
+
+  let body = `${shift} Ops Note — ${date}\nManager: ${manager}\n\n`;
+  body += `SUMMARY\n${summary || '(none entered)'}\n\n`;
+
+  body += `GUEST INCIDENTS / FLAGS\n`;
+  body += incidents.length ? incidents.map(i=>'- '+i).join('\n') : '- None';
+  body += `\n\n`;
+
+  body += `MAINTENANCE / FACILITY\n`;
+  body += maint.length ? maint.map(i=>'- '+i).join('\n') : '- None';
+  body += `\n\n`;
+
+  body += `SUPPLIES LOW\n`;
+  body += supplies.length ? supplies.map(i=>'- '+i).join('\n') : '- None';
+  body += `\n\n`;
+
+  body += `STAFF / MEMBER NOTES\n`;
+  body += staffNotes.length ? staffNotes.map(i=>'- '+i).join('\n') : '- None';
+
+  const hasNumbers = totalSales||retailSales||totalVisits||peakVolume||peakTime||slowestTime;
+  if(hasNumbers){
+    body += `\n\nDAILY NUMBERS\n`;
+    if(totalSales) body += `Total Sales: ${totalSales}\n`;
+    if(retailSales) body += `Retail Sales: ${retailSales}\n`;
+    if(totalVisits) body += `Total Visits: ${totalVisits}\n`;
+    if(peakVolume) body += `Peak Volume: ${peakVolume}\n`;
+    if(peakTime) body += `Peak Time: ${peakTime}\n`;
+    if(slowestTime) body += `Slowest Time: ${slowestTime}\n`;
+  }
+
+  const subject = `${shift} Ops Note ${date}`;
+  lastMailtoUrl = `mailto:${MANAGEMENT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  window.location.href = lastMailtoUrl;
+
+  document.getElementById('formScreen').classList.add('hide');
+  document.getElementById('doneScreen').classList.add('show');
+}
+
+function reopenMail(){
+  if(lastMailtoUrl) window.location.href = lastMailtoUrl;
+}
+
+function startNew(){
+  document.getElementById('formScreen').classList.remove('hide');
+  document.getElementById('doneScreen').classList.remove('show');
+  document.querySelectorAll('input[type=text], textarea').forEach(el=>el.value='');
+  document.getElementById('date').value='';
+  document.getElementById('shift').value='';
+  ['incidentsList','maintList','suppliesList','staffList'].forEach(id=>{
+    document.getElementById(id).innerHTML='';
+  });
+}
+</script>
+</body>
+</html>
