@@ -116,7 +116,7 @@
         </div>
         <div>
           <label>Shift</label>
-          <select id="shift">
+          <select id="shift" onchange="toggleDailyNumbers()">
             <option value="">Select...</option>
             <option>AM</option>
             <option>PM</option>
@@ -159,8 +159,8 @@
       <button class="add-btn" onclick="addRow('staffList','e.g. Tomas Cabezon — becoming a regular, consider for waitlist')">+ Add note</button>
     </div>
 
-    <div class="card">
-      <h2>Daily Numbers <span style="font-weight:400;text-transform:none;color:#8a8477;">(optional)</span></h2>
+    <div class="card" id="dailyNumbersCard" style="display:none;">
+      <h2>Daily Numbers <span style="font-weight:400;text-transform:none;color:#8a8477;">(PM only)</span></h2>
       <div class="numbers-grid">
         <div>
           <label>Total Sales</label>
@@ -223,6 +223,12 @@ function collectRows(listId){
   return Array.from(document.querySelectorAll('#'+listId+' input'))
     .map(i=>i.value.trim())
     .filter(v=>v.length>0);
+}
+
+function toggleDailyNumbers(){
+  const shift = document.getElementById('shift').value;
+  const card = document.getElementById('dailyNumbersCard');
+  card.style.display = (shift === 'PM') ? 'block' : 'none';
 }
 
 let lastMailtoUrl = "";
@@ -293,6 +299,7 @@ function startNew(){
   document.querySelectorAll('input[type=text], textarea').forEach(el=>el.value='');
   document.getElementById('date').value='';
   document.getElementById('shift').value='';
+  document.getElementById('dailyNumbersCard').style.display = 'none';
   ['incidentsList','maintList','suppliesList','staffList'].forEach(id=>{
     document.getElementById(id).innerHTML='';
   });
