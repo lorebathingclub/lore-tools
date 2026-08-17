@@ -68,6 +68,12 @@
   }
   .add-btn:hover{border-color:var(--accent);}
   .numbers-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .currency-wrap{position:relative;}
+  .currency-wrap .currency-prefix{
+    position:absolute;left:10px;top:50%;transform:translateY(-50%);
+    color:#8a8477;font-size:15px;pointer-events:none;
+  }
+  .currency-wrap input{padding-left:22px;}
   .submit-btn{
     width:100%;
     background:var(--accent-dark);
@@ -172,11 +178,10 @@
       <div class="numbers-grid">
         <div>
           <label>Total Sales</label>
-          <input type="text" id="totalSales" placeholder="$">
-        </div>
-        <div>
-          <label>Retail Sales</label>
-          <input type="text" id="retailSales" placeholder="$">
+          <div class="currency-wrap">
+            <span class="currency-prefix">$</span>
+            <input type="number" id="totalSales" step="0.01" min="0" placeholder="0.00">
+          </div>
         </div>
         <div>
           <label>Total Visits</label>
@@ -184,15 +189,15 @@
         </div>
         <div>
           <label>Peak Volume</label>
-          <input type="text" id="peakVolume" placeholder="e.g. 29 people at 5:50">
+          <input type="text" id="peakVolume" placeholder="e.g. 29 people">
         </div>
         <div>
           <label>Peak Time</label>
-          <input type="text" id="peakTime">
+          <input type="time" id="peakTime">
         </div>
         <div>
           <label>Slowest Time</label>
-          <input type="text" id="slowestTime">
+          <input type="time" id="slowestTime">
         </div>
       </div>
     </div>
@@ -240,7 +245,7 @@ function toggleDailyNumbers(){
   document.getElementById('shift').classList.remove('error');
 }
 
-['date','shift','manager','summary','totalSales','retailSales','totalVisits','peakVolume','peakTime','slowestTime'].forEach(id=>{
+['date','shift','manager','summary','totalSales','totalVisits','peakVolume','peakTime','slowestTime'].forEach(id=>{
   const el = document.getElementById(id);
   el.addEventListener('input', function(){ this.classList.remove('error'); });
   el.addEventListener('change', function(){ this.classList.remove('error'); });
@@ -267,7 +272,7 @@ function validateForm(){
   if(!summaryEl.value.trim()){ summaryEl.classList.add('error'); valid=false; firstInvalid=firstInvalid||summaryEl; }
 
   if(shiftEl.value === 'PM'){
-    ['totalSales','retailSales','totalVisits','peakVolume','peakTime','slowestTime'].forEach(id=>{
+    ['totalSales','totalVisits','peakVolume','peakTime','slowestTime'].forEach(id=>{
       const el = document.getElementById(id);
       if(!el.value.trim()){ el.classList.add('error'); valid=false; firstInvalid=firstInvalid||el; }
     });
@@ -279,6 +284,15 @@ function validateForm(){
   }
 
   return valid;
+}
+
+function formatTime12(t){
+  if(!t) return '';
+  const [h, m] = t.split(':').map(Number);
+  const period = h >= 12 ? 'PM' : 'AM';
+  let hour = h % 12;
+  if(hour === 0) hour = 12;
+  return `${hour}:${m.toString().padStart(2,'0')} ${period}`;
 }
 
 let lastMailtoUrl = "";
@@ -297,7 +311,6 @@ async function submitForm(){
   const staffNotes = collectRows('staffList');
 
   const totalSales = document.getElementById('totalSales').value.trim();
-  const retailSales = document.getElementById('retailSales').value.trim();
   const totalVisits = document.getElementById('totalVisits').value.trim();
   const peakVolume = document.getElementById('peakVolume').value.trim();
   const peakTime = document.getElementById('peakTime').value.trim();
@@ -321,15 +334,14 @@ async function submitForm(){
   body += `STAFF / MEMBER NOTES\n`;
   body += staffNotes.length ? staffNotes.map(i=>'- '+i).join('\n') : '- None';
 
-  const hasNumbers = totalSales||retailSales||totalVisits||peakVolume||peakTime||slowestTime;
+  const hasNumbers = totalSales||totalVisits||peakVolume||peakTime||slowestTime;
   if(hasNumbers){
     body += `\n\nDAILY NUMBERS\n`;
-    if(totalSales) body += `Total Sales: ${totalSales}\n`;
-    if(retailSales) body += `Retail Sales: ${retailSales}\n`;
+    if(totalSales) body += `Total Sales: $${parseFloat(totalSales).toFixed(2)}\n`;
     if(totalVisits) body += `Total Visits: ${totalVisits}\n`;
     if(peakVolume) body += `Peak Volume: ${peakVolume}\n`;
-    if(peakTime) body += `Peak Time: ${peakTime}\n`;
-    if(slowestTime) body += `Slowest Time: ${slowestTime}\n`;
+    if(peakTime) body += `Peak Time: ${formatTime12(peakTime)}\n`;
+    if(slowestTime) body += `Slowest Time: ${formatTime12(slowestTime)}\n`;
   }
 
   const subject = `${shift} Ops Note ${date}`;
@@ -376,7 +388,7 @@ function reopenMail(){
 function startNew(){
   document.getElementById('formScreen').classList.remove('hide');
   document.getElementById('doneScreen').classList.remove('show');
-  document.querySelectorAll('input[type=text], textarea').forEach(el=>el.value='');
+  document.querySelectorAll('input[type=text], input[type=number], input[type=time], textarea').forEach(el=>el.value='');
   document.getElementById('date').value='';
   document.getElementById('shift').value='';
   document.getElementById('dailyNumbersCard').style.display = 'none';
