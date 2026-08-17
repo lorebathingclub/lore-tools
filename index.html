@@ -105,20 +105,8 @@
     <div class="error-banner" id="errorBanner">Please complete the highlighted fields before submitting.</div>
 
     <div class="card shift-card">
-      <div class="row" style="margin-bottom:10px;">
-        <div>
-          <label>Date <span style="color:var(--warn);">*</span></label>
-          <input type="date" id="date">
-        </div>
-        <div>
-          <label>Shift <span style="color:var(--warn);">*</span></label>
-          <select id="shift">
-            <option value="">Select...</option>
-            <option>AM</option>
-            <option>PM</option>
-          </select>
-        </div>
-      </div>
+      <label>Date <span style="color:var(--warn);">*</span></label>
+      <input type="date" id="date" style="margin-bottom:10px;">
       <label>Manager <span style="color:var(--warn);">*</span></label>
       <input type="text" id="manager" placeholder="Name">
     </div>
@@ -177,11 +165,11 @@ const sections = [
       { type:'item', text:'Check that the light strip above the hammam benches and the long strip above the pool are set to the arrows', cond:'As low as possible while still on', indent:true },
       { type:'item', text:'Check that these are the only lights on, other than the light in the pool', cond:'Any other overhead needs to be off', indent:true },
       { type:'item', text:'Make sure the small trash can is out with a fresh bag', cond:'Under the shelf in front of the sauna', indent:true },
+      { type:'item', text:'Check that the lamp above the water fountain is on', indent:true },
       { type:'item', text:'Make sure all music is playing throughout the space as set', indent:true },
       { type:'item', text:'If there\u2019s any smell in front of the sauna, put a copal above the water fountain', indent:true },
       { type:'item', text:'Check that all lights are set correctly', cond:'Front stairway light, light in back of men\u2019s room, and lights above pool: set to level marked by arrow. All other lights: set to levels labeled in boiler room. Light above back stairs and light above pool: OFF. Cafe sconces (set in sauna master room behind front desk): ON. Dimmers on light switches below cafe sconces: all the way down, switches themselves OFF', indent:true },
       { type:'item', text:'Check that the fridge light is on', indent:true },
-      { type:'item', text:'Check that the lamp above the water fountain is on', indent:true },
       { type:'item', text:'Check that drinks are stocked', indent:true },
       { type:'item', text:'Check that the front door is clean', indent:true },
       { type:'item', text:'Test pool water' },
@@ -259,7 +247,7 @@ function setStatus(id, btn, isIssue){
 
 renderSections();
 
-['date','shift','manager','finalNotes'].forEach(id=>{
+['date','manager','finalNotes'].forEach(id=>{
   document.getElementById(id).addEventListener('input', function(){ this.classList.remove('error'); });
   document.getElementById(id).addEventListener('change', function(){ this.classList.remove('error'); });
 });
@@ -281,11 +269,9 @@ function validateForm(){
   let valid = true;
 
   const dateEl = document.getElementById('date');
-  const shiftEl = document.getElementById('shift');
   const managerEl = document.getElementById('manager');
 
   if(!dateEl.value){ dateEl.classList.add('error'); valid=false; firstInvalid = firstInvalid || dateEl; }
-  if(!shiftEl.value){ shiftEl.classList.add('error'); valid=false; firstInvalid = firstInvalid || shiftEl; }
   if(!managerEl.value.trim()){ managerEl.classList.add('error'); valid=false; firstInvalid = firstInvalid || managerEl; }
 
   document.querySelectorAll('.item').forEach(item=>{
@@ -319,11 +305,10 @@ async function submitForm(){
   if(!validateForm()) return;
 
   const date = document.getElementById('date').value;
-  const shift = document.getElementById('shift').value;
   const manager = document.getElementById('manager').value.trim();
   const finalNotes = document.getElementById('finalNotes').value.trim();
 
-  let body = `${shift} Opening Checklist, ${date}\nManager: ${manager}\n\n`;
+  let body = `Opening Checklist, ${date}\nManager: ${manager}\n\n`;
   let issueCount = 0;
 
   document.querySelectorAll('.section').forEach(sec=>{
@@ -351,7 +336,7 @@ async function submitForm(){
 
   body += `FLAGGED\n${finalNotes || 'None'}`;
 
-  const subject = `${shift} Opening Checklist ${date}${issueCount ? ', ' + issueCount + ' issue(s)' : ''}`;
+  const subject = `Opening Checklist ${date}${issueCount ? ', ' + issueCount + ' issue(s)' : ''}`;
   lastMailtoUrl = `mailto:${MANAGEMENT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
   const submitBtn = document.querySelector('.submit-btn');
@@ -363,7 +348,6 @@ async function submitForm(){
     formData.append('_subject', subject);
     formData.append('message', body);
     formData.append('date', date);
-    formData.append('shift', shift);
     formData.append('manager', manager);
 
     const res = await fetch('https://formspree.io/f/xdenwywv', {
@@ -397,7 +381,6 @@ function startNew(){
   document.getElementById('formScreen').classList.remove('hide');
   document.getElementById('doneScreen').classList.remove('show');
   document.getElementById('date').value='';
-  document.getElementById('shift').value='';
   document.getElementById('manager').value='';
   document.getElementById('finalNotes').value='';
   clearErrors();
