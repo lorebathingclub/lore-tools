@@ -120,7 +120,8 @@
             <option value="">Select...</option>
             <option value="AM">AM</option>
             <option value="PM">PM</option>
-            <option value="Closing">Closing</option>
+            <option value="Closing Standard">Closing: Standard</option>
+            <option value="Closing Deep Clean">Closing: Deep Clean</option>
           </select>
         </div>
       </div>
@@ -234,7 +235,18 @@ const sectionsByShift = {
     { type:'item', text:'Test pool water' },
     { type:'item', text:'Flag to staff what needs reset in locker rooms + pool' },
   ],
-  Closing: [
+  "Closing Standard": [
+    { type:'group', text:'Check all locker rooms to ensure they\u2019re ready for next shift' },
+    { type:'item', text:'No towels left in hampers', indent:true },
+    { type:'item', text:'All amenities are full, clean, and in their place', indent:true },
+    { type:'item', text:'Showers are clean (no hair, products full)', indent:true },
+    { type:'item', text:'Place all iPads + laptop on chargers', indent:true },
+    { type:'item', text:'Turn off music in all spaces', cond:'If Oscar is on, feel free to ask him what music he\u2019d like and leave it on before putting away the iPads', indent:true },
+    { type:'item', text:'Lock doors' },
+    { type:'item', text:'Turn off sconces' },
+    { type:'item', text:'Turn off music (not just lower volume)' },
+  ],
+  "Closing Deep Clean": [
     { type:'group', text:'Check all locker rooms to ensure they\u2019re ready for next shift' },
     { type:'item', text:'No towels left in hampers', indent:true },
     { type:'item', text:'All amenities are full, clean, and in their place', indent:true },
