@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Lore Bathing Club: PM Checklist</title>
+<style>
+  :root{
+    --ink:#1c1c1a;
+    --paper:#faf9f6;
+    --line:#dedad2;
+    --accent:#7a6a53;
+    --accent-dark:#4f4536;
+    --ok:#4c6b4f;
+    --warn:#a05c4c;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.4;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:28px 20px 100px;}
+  header{margin-bottom:20px;}
+  header h1{font-size:20px;margin:0 0 2px;}
+  header p{margin:0;color:#6b6558;font-size:13px;}
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:10px;
+    padding:14px 16px;margin-bottom:14px;
+  }
+  .shift-card .row{display:flex;gap:10px;}
+  .shift-card .row > div{flex:1;}
+  label{display:block;font-size:13px;color:#494438;margin-bottom:4px;}
+  input[type=text], input[type=date], select, textarea{
+    width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:7px;
+    font-size:15px;font-family:inherit;background:#fffdfa;color:var(--ink);
+  }
+  textarea{resize:vertical;min-height:50px;}
+  .section-title{
+    font-size:12px;text-transform:uppercase;letter-spacing:0.08em;
+    color:#fff;background:var(--accent-dark);font-weight:600;
+    margin:-14px -16px 10px;padding:9px 16px;border-radius:10px 10px 0 0;
+  }
+  .group-label{
+    font-size:13.5px;font-weight:600;color:var(--accent-dark);
+    padding:10px 0 4px;
+  }
+  .item{
+    display:flex;align-items:flex-start;gap:10px;padding:9px 0;
+    border-top:1px solid #f0ede6;
+  }
+  .item.first{border-top:none;}
+  .item.indent{padding-left:14px;}
+  .item.indent .item-label{font-size:13.5px;color:#3d3a34;}
+  .item label.item-label{flex:1;font-size:14.5px;color:var(--ink);margin:0;padding-top:2px;}
+  .cond{color:#8a8477;font-weight:400;}
+  .status-btns{display:flex;gap:6px;flex-shrink:0;}
+  .status-btn{
+    width:36px;height:32px;border-radius:7px;border:1px solid var(--line);
+    background:#fff;font-size:15px;cursor:pointer;color:#9a9384;
+  }
+  .status-btn.ok.active{background:var(--ok);border-color:var(--ok);color:#fff;}
+  .status-btn.issue.active{background:var(--warn);border-color:var(--warn);color:#fff;}
+  .item.error .item-label{color:var(--warn);}
+  .item.error .status-btn{border-color:var(--warn);}
+  input.error, select.error{border-color:var(--warn);background:#fdf3f1;}
+  .note-input input.error{border-color:var(--warn);background:#fdf3f1;}
+  .error-banner{
+    display:none;background:#fdf3f1;border:1px solid #eac4bb;color:var(--warn);
+    font-size:13px;padding:10px 12px;border-radius:8px;margin-bottom:14px;
+  }
+  .error-banner.show{display:block;}
+  .note-input{margin:0 0 8px 14px;display:none;}
+  .note-input.show{display:block;}
+  .submit-btn{
+    width:100%;background:var(--accent-dark);color:#fff;border:none;
+    border-radius:9px;padding:14px;font-size:15px;font-weight:600;cursor:pointer;
+  }
+  .done-screen{display:none;text-align:center;padding:40px 10px;}
+  .done-screen.show{display:block;}
+  .form-screen.hide{display:none;}
+  .check{
+    width:46px;height:46px;border-radius:50%;background:var(--ok);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 14px;
+  }
+  .done-screen h2{font-size:18px;margin:0 0 6px;}
+  .done-screen p{color:#6b6558;font-size:14px;margin:0 0 24px;}
+  .secondary-btn{
+    display:inline-block;background:#fff;border:1px solid var(--line);color:var(--ink);
+    padding:10px 16px;border-radius:8px;font-size:14px;cursor:pointer;margin:4px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="form-screen" id="formScreen">
+    <header>
+      <h1>Lore Bathing Club</h1>
+      <p>PM Checklist</p>
+    </header>
+
+    <div class="error-banner" id="errorBanner">Please complete the highlighted fields before submitting.</div>
+
+    <div class="card shift-card">
+      <div class="row" style="margin-bottom:10px;">
+        <div>
+          <label>Date <span style="color:var(--warn);">*</span></label>
+          <input type="date" id="date">
+        </div>
+        <div>
+          <label>Shift <span style="color:var(--warn);">*</span></label>
+          <select id="shift">
+            <option value="">Select...</option>
+            <option>AM</option>
+            <option>PM</option>
+          </select>
+        </div>
+      </div>
+      <label>Manager <span style="color:var(--warn);">*</span></label>
+      <input type="text" id="manager" placeholder="Name">
+    </div>
+
+    <div id="sections"></div>
+
+    <div class="card">
+      <div class="section-title" style="margin:-14px -16px 10px;">Anything Else Flagged</div>
+      <div style="font-size:12px;color:#8a8477;margin:-4px 0 8px;">Optional.</div>
+      <textarea id="finalNotes" placeholder="Anything not covered above"></textarea>
+    </div>
+
+    <button class="submit-btn" onclick="submitForm()">Submit &amp; Email Management</button>
+  </div>
+
+  <div class="done-screen" id="doneScreen">
+    <div class="check">✓</div>
+    <h2>PM Checklist Sent</h2>
+    <p id="doneSubtext">Draft opened in your email app, hit send to deliver to management.</p>
+    <button class="secondary-btn" onclick="reopenMail()">Reopen Email Draft</button>
+    <button class="secondary-btn" onclick="startNew()">Start New PM Checklist</button>
+  </div>
+
+</div>
+
+<script>
+const MANAGEMENT_EMAIL = "management@lorebathingclub.com";
+
+// row types: 'item' (checkable), 'group' (bold sub-label, not checkable)
+const sections = [
+  {
+    title: "PM Checklist",
+    rows: [
+      { type:'item', text:'Check light levels in boiler room' },
+      { type:'group', text:'Check music levels and playlists' },
+      { type:'item', text:'Reception from iPad in holder (the Row monthly playlist, Lore reception, etc)', cond:'59 volume', indent:true },
+      { type:'item', text:'Pool from iPad in case (741hz or 541hz)', cond:'69 volume', indent:true },
+      { type:'item', text:'Sauna from desktop (AFG1 or AFG2)', cond:'38 volume if less than 10 people, 42 if more', indent:true },
+      { type:'group', text:'Walkthrough of space' },
+      { type:'item', text:'Set copal in cafe', indent:true },
+      { type:'item', text:'Set copal in front stairwell', indent:true },
+      { type:'item', text:'Check front stairwell light', cond:'Set to level marked by arrow', indent:true },
+      { type:'item', text:'Note any mess in your gender locker room to attendants starting shift', indent:true },
+      { type:'item', text:'Are the products in the showers full to right levels?', indent:true },
+      { type:'item', text:'Are the toiletries on the counter well stocked?', indent:true },
+      { type:'item', text:'Delegate this same check in the opposite gender locker room', indent:true },
+      { type:'item', text:'Men\u2019s room only: double check the light set in the back of the space', cond:'Should be set to the level marked by the arrow', indent:true },
+      { type:'item', text:'Set copal in front of the pool testing room', indent:true },
+      { type:'item', text:'Check that the IR rug is laid out, the IR is on, lights in the IR are on, and lights in the cellar behind the IR are on', indent:true },
+      { type:'item', text:'Check that back shower room is set up, full of towels', indent:true },
+      { type:'item', text:'Walk upstairs, set copal on the right side of the ledge (not the middle)', indent:true },
+      { type:'item', text:'Note any smelly rugs for switch out by attendants', indent:true },
+      { type:'item', text:'Make sure the back stairs don\u2019t have an extra light on', cond:'Light above them is set in the small closet across from the cold room', indent:true },
+      { type:'item', text:'Check that pool deck is clean, dry, and towels are cleared away from the morning', cond:'Flag to attendants if not', indent:true },
+      { type:'item', text:'Check that bottle fill is running well; change filter if not', cond:'Ask if unsure how', indent:true },
+      { type:'item', text:'Check that hammam benches are set to 104', cond:'Turn on for hammam at 6AM. "Return to schedule" if not', indent:true },
+      { type:'item', text:'Check that the light strip above the hammam benches and the long strip above the pool are set to the arrows', cond:'As low as possible while still on', indent:true },
+      { type:'item', text:'Check that these are the only lights on, other than the light in the pool', cond:'Any other overhead needs to be off', indent:true },
+      { type:'item', text:'Make sure the small trash can is out with a fresh bag', cond:'Under the shelf in front of the sauna', indent:true },
+      { type:'item', text:'Check that the lamp above the water fountain is on', indent:true },
+      { type:'item', text:'Make sure all music is playing throughout the space as set', indent:true },
+      { type:'item', text:'If there\u2019s any smell in front of the sauna, put a copal above the water fountain', indent:true },
+      { type:'item', text:'Check that all lights are set correctly', cond:'Front stairway light, light in back of men\u2019s room, and lights above pool: set to level marked by arrow. All other lights: set to levels labeled in boiler room. Light above back stairs and light above pool: OFF. Cafe sconces (set in sauna master room behind front desk): ON. Dimmers on light switches below cafe sconces: all the way down, switches themselves OFF', indent:true },
+      { type:'item', text:'Check that drinks are stocked', indent:true },
+      { type:'item', text:'Check that the front door is clean', indent:true },
+      { type:'item', text:'Test pool water' },
+      { type:'item', text:'Unlock office upstairs + turn on lights' },
+      { type:'item', text:'Flag to staff what needs reset in locker rooms + pool' },
+    ]
+  }
+];
+
+let itemCount = 0;
+
+function renderSections(){
+  const container = document.getElementById('sections');
+  container.innerHTML = '';
+  sections.forEach(sec=>{
+    const card = document.createElement('div');
+    card.className = 'card section';
+    const titleEl = document.createElement('div');
+    titleEl.className = 'section-title';
+    titleEl.innerText = sec.title;
+    card.appendChild(titleEl);
+
+    sec.rows.forEach((row, idx)=>{
+      if(row.type === 'group'){
+        const g = document.createElement('div');
+        g.className = 'group-label';
+        g.innerHTML = row.text + (row.cond ? ` <span class="cond">: ${row.cond}</span>` : '');
+        card.appendChild(g);
+      } else {
+        itemCount++;
+        const id = 'item'+itemCount;
+        const item = document.createElement('div');
+        item.className = 'item' + (row.indent ? ' indent' : '') + (idx===0 ? ' first' : '');
+        item.dataset.itemId = id;
+        item.dataset.label = row.text + (row.cond ? ': ' + row.cond : '');
+        item.innerHTML = `
+          <label class="item-label">${row.text}${row.cond ? ` <span class="cond">: ${row.cond}</span>` : ''}</label>
+          <div class="status-btns">
+            <button type="button" class="status-btn ok" onclick="setStatus('${id}',this)">✓</button>
+            <button type="button" class="status-btn issue" onclick="setStatus('${id}',this,true)">!</button>
+          </div>
+        `;
+        card.appendChild(item);
+        const noteDiv = document.createElement('div');
+        noteDiv.className = 'note-input';
+        noteDiv.id = 'note-'+id;
+        noteDiv.innerHTML = `<input type="text" placeholder="What's the issue?">`;
+        card.appendChild(noteDiv);
+      }
+    });
+    container.appendChild(card);
+  });
+}
+
+function setStatus(id, btn, isIssue){
+  const row = btn.closest('.item');
+  row.classList.remove('error');
+  row.querySelectorAll('.status-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  row.dataset.status = isIssue ? 'issue' : 'ok';
+  const note = document.getElementById('note-'+id);
+  if(isIssue){
+    note.classList.add('show');
+  } else {
+    note.classList.remove('show');
+    note.querySelector('input').classList.remove('error');
+  }
+}
+
+renderSections();
+
+['date','shift','manager','finalNotes'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', function(){ this.classList.remove('error'); });
+  document.getElementById(id).addEventListener('change', function(){ this.classList.remove('error'); });
+});
+
+document.getElementById('sections').addEventListener('input', function(e){
+  if(e.target.tagName === 'INPUT'){
+    e.target.classList.remove('error');
+  }
+});
+
+function clearErrors(){
+  document.querySelectorAll('.error').forEach(el=>el.classList.remove('error'));
+  document.getElementById('errorBanner').classList.remove('show');
+}
+
+function validateForm(){
+  clearErrors();
+  let firstInvalid = null;
+  let valid = true;
+
+  const dateEl = document.getElementById('date');
+  const shiftEl = document.getElementById('shift');
+  const managerEl = document.getElementById('manager');
+
+  if(!dateEl.value){ dateEl.classList.add('error'); valid=false; firstInvalid = firstInvalid || dateEl; }
+  if(!shiftEl.value){ shiftEl.classList.add('error'); valid=false; firstInvalid = firstInvalid || shiftEl; }
+  if(!managerEl.value.trim()){ managerEl.classList.add('error'); valid=false; firstInvalid = firstInvalid || managerEl; }
+
+  document.querySelectorAll('.item').forEach(item=>{
+    const status = item.dataset.status;
+    if(!status){
+      item.classList.add('error');
+      valid = false;
+      firstInvalid = firstInvalid || item;
+    } else if(status === 'issue'){
+      const id = item.dataset.itemId;
+      const noteInput = document.querySelector('#note-'+id+' input');
+      if(!noteInput.value.trim()){
+        noteInput.classList.add('error');
+        valid = false;
+        firstInvalid = firstInvalid || noteInput;
+      }
+    }
+  });
+
+  if(!valid){
+    document.getElementById('errorBanner').classList.add('show');
+    if(firstInvalid) firstInvalid.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  return valid;
+}
+
+let lastMailtoUrl = "";
+
+async function submitForm(){
+  if(!validateForm()) return;
+
+  const date = document.getElementById('date').value;
+  const shift = document.getElementById('shift').value;
+  const manager = document.getElementById('manager').value.trim();
+  const finalNotes = document.getElementById('finalNotes').value.trim();
+
+  let body = `${shift} Checklist, ${date}\nManager: ${manager}\n\n`;
+  let issueCount = 0;
+
+  document.querySelectorAll('.section').forEach(sec=>{
+    const title = sec.querySelector('.section-title').innerText.trim();
+    body += `${title.toUpperCase()}\n`;
+    const items = sec.querySelectorAll('.item');
+    items.forEach(item=>{
+      const label = item.dataset.label;
+      const status = item.dataset.status;
+      let mark = '[ ]';
+      if(status === 'ok') mark = '[OK]';
+      if(status === 'issue'){
+        mark = '[ISSUE]';
+        issueCount++;
+      }
+      body += `${mark} ${label}\n`;
+      if(status === 'issue'){
+        const id = item.dataset.itemId;
+        const noteVal = document.querySelector('#note-'+id+' input').value.trim();
+        if(noteVal) body += `      note: ${noteVal}\n`;
+      }
+    });
+    body += `\n`;
+  });
+
+  body += `FLAGGED\n${finalNotes || 'None'}`;
+
+  const subject = `${shift} Checklist ${date}${issueCount ? ', ' + issueCount + ' issue(s)' : ''}`;
+  lastMailtoUrl = `mailto:${MANAGEMENT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  const submitBtn = document.querySelector('.submit-btn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Sending...';
+
+  try{
+    const formData = new FormData();
+    formData.append('_subject', subject);
+    formData.append('message', body);
+    formData.append('date', date);
+    formData.append('shift', shift);
+    formData.append('manager', manager);
+
+    const res = await fetch('https://formspree.io/f/xdenwywv', {
+      method: 'POST',
+      body: formData,
+      headers: { 'Accept': 'application/json' }
+    });
+
+    if(!res.ok) throw new Error('Formspree request failed');
+
+    document.getElementById('doneSubtext').textContent = 'Sent straight to management, no need to open your email app.';
+    document.getElementById('formScreen').classList.add('hide');
+    document.getElementById('doneScreen').classList.add('show');
+  } catch(err){
+    window.location.href = lastMailtoUrl;
+    document.getElementById('doneSubtext').textContent = 'Couldn\u2019t send automatically, draft opened in your email app, hit send to deliver it.';
+    document.getElementById('formScreen').classList.add('hide');
+    document.getElementById('doneScreen').classList.add('show');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit & Email Management';
+  }
+}
+
+function reopenMail(){
+  if(lastMailtoUrl) window.location.href = lastMailtoUrl;
+}
+
+function startNew(){
+  document.getElementById('formScreen').classList.remove('hide');
+  document.getElementById('doneScreen').classList.remove('show');
+  document.getElementById('date').value='';
+  document.getElementById('shift').value='';
+  document.getElementById('manager').value='';
+  document.getElementById('finalNotes').value='';
+  clearErrors();
+  renderSections();
+}
+</script>
+</body>
+</html>
