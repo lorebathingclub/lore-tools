@@ -297,7 +297,7 @@ function formatTime12(t){
 
 let lastMailtoUrl = "";
 
-async function submitForm(){
+function submitForm(){
   if(!validateForm()) return;
 
   const date = document.getElementById('date').value;
@@ -347,40 +347,12 @@ async function submitForm(){
   const subject = `${shift} Ops Note ${date}`;
   lastMailtoUrl = `mailto:${MANAGEMENT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-  const submitBtn = document.querySelector('.submit-btn');
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Sending...';
+  window.location.href = lastMailtoUrl;
 
-  try{
-    const formData = new FormData();
-    formData.append('_subject', subject);
-    formData.append('message', body);
-    formData.append('date', date);
-    formData.append('shift', shift);
-    formData.append('manager', manager);
-
-    const res = await fetch('https://formspree.io/f/xdenwywv', {
-      method: 'POST',
-      body: formData,
-      headers: { 'Accept': 'application/json' }
-    });
-
-    if(!res.ok) throw new Error('Formspree request failed');
-
-    document.getElementById('doneSubtext').textContent = 'Sent straight to management, no need to open your email app.';
-    document.getElementById('formScreen').classList.add('hide');
-    document.getElementById('doneScreen').classList.add('show');
-  } catch(err){
-    window.location.href = lastMailtoUrl;
-    document.getElementById('doneSubtext').textContent = 'Couldn\u2019t send automatically, draft opened in your email app, hit send to deliver it.';
-    document.getElementById('formScreen').classList.add('hide');
-    document.getElementById('doneScreen').classList.add('show');
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Submit & Email Management';
-  }
+  document.getElementById('doneSubtext').textContent = 'Draft opened in your email app, hit send to deliver it to management.';
+  document.getElementById('formScreen').classList.add('hide');
+  document.getElementById('doneScreen').classList.add('show');
 }
-
 function reopenMail(){
   if(lastMailtoUrl) window.location.href = lastMailtoUrl;
 }
