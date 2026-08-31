@@ -173,6 +173,12 @@
       <button class="add-btn" onclick="addRow('staffList','e.g. Staff name: called out sick, no coverage found yet')">+ Add note</button>
     </div>
 
+    <div class="card">
+      <h2>Intro Offers</h2>
+      <label>Intro offers sold at the desk this shift</label>
+      <input type="number" id="introOffers" min="0" step="1" placeholder="0">
+    </div>
+
     <div class="card" id="dailyNumbersCard" style="display:none;">
       <h2>Daily Numbers <span style="font-weight:400;text-transform:none;color:#8a8477;">(required for PM)</span></h2>
       <div class="numbers-grid">
@@ -245,7 +251,7 @@ function toggleDailyNumbers(){
   document.getElementById('shift').classList.remove('error');
 }
 
-['date','shift','manager','summary','totalSales','totalVisits','peakVolume','peakTime','slowestTime'].forEach(id=>{
+['date','shift','manager','summary','introOffers','totalSales','totalVisits','peakVolume','peakTime','slowestTime'].forEach(id=>{
   const el = document.getElementById(id);
   el.addEventListener('input', function(){ this.classList.remove('error'); });
   el.addEventListener('change', function(){ this.classList.remove('error'); });
@@ -310,6 +316,7 @@ function submitForm(){
   const supplies = collectRows('suppliesList');
   const staffNotes = collectRows('staffList');
 
+  const introOffers = document.getElementById('introOffers').value.trim();
   const totalSales = document.getElementById('totalSales').value.trim();
   const totalVisits = document.getElementById('totalVisits').value.trim();
   const peakVolume = document.getElementById('peakVolume').value.trim();
@@ -333,6 +340,8 @@ function submitForm(){
 
   body += `STAFF ISSUES\n`;
   body += staffNotes.length ? staffNotes.map(i=>'- '+i).join('\n') : '- None';
+
+  body += `\n\nINTRO OFFERS SOLD\n${introOffers || '0'}`;
 
   const hasNumbers = totalSales||totalVisits||peakVolume||peakTime||slowestTime;
   if(hasNumbers){
