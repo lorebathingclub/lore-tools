@@ -174,8 +174,8 @@
     </div>
 
     <div class="card">
-      <h2>Intro Week</h2>
-      <label>Intro Weeks sold at the desk this shift</label>
+      <h2>Intro Week + Weekly Membership</h2>
+      <label>Intro Week + Weekly Membership sales sold at the desk this shift</label>
       <input type="number" id="introOffers" min="0" step="1" placeholder="0">
     </div>
 
@@ -341,7 +341,7 @@ function submitForm(){
   body += `STAFF ISSUES\n`;
   body += staffNotes.length ? staffNotes.map(i=>'- '+i).join('\n') : '- None';
 
-  body += `\n\nINTRO WEEKS SOLD\n${introOffers || '0'}`;
+  body += `\n\nINTRO WEEK + WEEKLY MEMBERSHIP SALES\n${introOffers || '0'}`;
 
   const hasNumbers = totalSales||totalVisits||peakVolume||peakTime||slowestTime;
   if(hasNumbers){
