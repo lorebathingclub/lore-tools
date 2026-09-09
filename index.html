@@ -55,6 +55,7 @@
   .item.indent{padding-left:14px;}
   .item.indent .item-label{font-size:13.5px;color:#3d3a34;}
   .item label.item-label{flex:1;font-size:14.5px;color:var(--ink);margin:0;padding-top:2px;}
+  .item .inline-input{width:80px;flex:none;padding:7px 8px;font-size:14.5px;text-align:center;}
   .cond{color:#8a8477;font-weight:400;}
   .status-btns{display:flex;gap:6px;flex-shrink:0;}
   .status-btn{
@@ -153,7 +154,7 @@
 <script>
 const MANAGEMENT_EMAIL = "management@lorebathingclub.com";
 
-// row types: 'item' (checkable), 'group' (bold sub-label, not checkable)
+// row types: 'item' (checkable), 'group' (bold sub-label, not checkable), 'input' (short text answer)
 const sectionsByShift = {
   AM: [
     { type:'item', text:'Turn on both saunas', cond:'85 for main sauna' },
@@ -190,7 +191,9 @@ const sectionsByShift = {
     { type:'item', text:'Check that the fridge light is on', indent:true },
     { type:'item', text:'Check that drinks are stocked', indent:true },
     { type:'item', text:'Check that the front door is clean', indent:true },
-    { type:'item', text:'Test pool water' },
+    { type:'group', text:'Pool Room' },
+    { type:'item', text:'Test pool water', indent:true },
+    { type:'input', text:'Check the chiller', cond:'Note the temp', placeholder:'XX.X', indent:true },
     { type:'item', text:'Prop open building gate with brick' },
     { type:'item', text:'Unlock office upstairs + turn on lights' },
     { type:'item', text:'Flag to staff what needs reset in locker rooms + pool' },
@@ -317,6 +320,18 @@ function renderSections(){
       g.className = 'group-label';
       g.innerHTML = row.text + (row.cond ? ` <span class="cond">: ${row.cond}</span>` : '');
       card.appendChild(g);
+    } else if(row.type === 'input'){
+      itemCount++;
+      const id = 'item'+itemCount;
+      const item = document.createElement('div');
+      item.className = 'item input-item' + (row.indent ? ' indent' : '') + (idx===0 ? ' first' : '');
+      item.dataset.itemId = id;
+      item.dataset.label = row.text + (row.cond ? ': ' + row.cond : '');
+      item.innerHTML = `
+        <label class="item-label">${row.text}${row.cond ? ` <span class="cond">: ${row.cond}</span>` : ''}</label>
+        <input type="text" class="inline-input" placeholder="${row.placeholder || ''}">
+      `;
+      card.appendChild(item);
     } else {
       itemCount++;
       const id = 'item'+itemCount;
@@ -395,6 +410,15 @@ function validateForm(){
   if(!managerEl.value.trim()){ managerEl.classList.add('error'); valid=false; firstInvalid = firstInvalid || managerEl; }
 
   document.querySelectorAll('.item').forEach(item=>{
+    if(item.classList.contains('input-item')){
+      const valInput = item.querySelector('.inline-input');
+      if(!valInput.value.trim()){
+        valInput.classList.add('error');
+        valid = false;
+        firstInvalid = firstInvalid || valInput;
+      }
+      return;
+    }
     const status = item.dataset.status;
     if(!status){
       item.classList.add('error');
@@ -438,6 +462,11 @@ function submitForm(){
     const items = sec.querySelectorAll('.item');
     items.forEach(item=>{
       const label = item.dataset.label;
+      if(item.classList.contains('input-item')){
+        const val = item.querySelector('.inline-input').value.trim();
+        body += `${label}: ${val || '(not entered)'}\n`;
+        return;
+      }
       const status = item.dataset.status;
       let mark = '[ ]';
       if(status === 'ok') mark = '[OK]';
