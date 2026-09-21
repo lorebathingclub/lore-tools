@@ -142,6 +142,12 @@
     </div>
 
     <div class="card">
+      <h2>Weather</h2>
+      <label>What was the weather like? (temp, rainy, sunny, etc)</label>
+      <input type="text" id="weather" placeholder="e.g. 68°F, sunny">
+    </div>
+
+    <div class="card">
       <h2>Shift Summary <span style="color:#a05c4c;">*</span></h2>
       <label>How'd it go? (1–2 sentences, no more)</label>
       <textarea id="summary" placeholder="e.g. Steady day, no major issues."></textarea>
@@ -251,7 +257,7 @@ function toggleDailyNumbers(){
   document.getElementById('shift').classList.remove('error');
 }
 
-['date','shift','manager','summary','introOffers','totalSales','totalVisits','peakVolume','peakTime','slowestTime'].forEach(id=>{
+['date','shift','manager','weather','summary','introOffers','totalSales','totalVisits','peakVolume','peakTime','slowestTime'].forEach(id=>{
   const el = document.getElementById(id);
   el.addEventListener('input', function(){ this.classList.remove('error'); });
   el.addEventListener('change', function(){ this.classList.remove('error'); });
@@ -309,6 +315,7 @@ function submitForm(){
   const date = document.getElementById('date').value;
   const shift = document.getElementById('shift').value;
   const manager = document.getElementById('manager').value.trim();
+  const weather = document.getElementById('weather').value.trim();
   const summary = document.getElementById('summary').value.trim();
 
   const incidents = collectRows('incidentsList');
@@ -324,6 +331,7 @@ function submitForm(){
   const slowestTime = document.getElementById('slowestTime').value.trim();
 
   let body = `${shift} Ops Note, ${date}\nManager: ${manager}\n\n`;
+  body += `WEATHER\n${weather || 'Not noted'}\n\n`;
   body += `SUMMARY\n${summary}\n\n`;
 
   body += `GUEST INCIDENTS / FLAGS\n`;
