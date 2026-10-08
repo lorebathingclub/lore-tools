@@ -410,6 +410,25 @@ function clearErrors(){
   document.getElementById('errorBanner').classList.remove('show');
 }
 
+// Deep Clean closings run Mon (1) and Thu (4); every other night is Standard.
+const DEEP_CLEAN_DOW = [1, 4];
+const DOW_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+// Returns an error message if the chosen closing type doesn't match the date's weekday, else ''.
+function dayMismatchMessage(dateStr, shiftVal){
+  if(!dateStr || shiftVal.indexOf('Closing') !== 0) return '';
+  const p = dateStr.split('-').map(Number);
+  const dow = new Date(p[0], p[1]-1, p[2]).getDay();
+  const isDeepNight = DEEP_CLEAN_DOW.includes(dow);
+  if(shiftVal === 'Closing Deep Clean' && !isDeepNight){
+    return DOW_NAMES[dow] + ' is not a Deep Clean night (Mon/Thu only). Pick Closing: Standard or fix the date.';
+  }
+  if(shiftVal === 'Closing Standard' && isDeepNight){
+    return DOW_NAMES[dow] + ' is a Deep Clean night. Pick Closing: Deep Clean (Mon/Thu) or fix the date.';
+  }
+  return '';
+}
+
 function validateForm(){
   clearErrors();
   let firstInvalid = null;
@@ -449,8 +468,20 @@ function validateForm(){
     }
   });
 
+  const hadOtherErrors = !valid;
+  const mismatchMsg = dayMismatchMessage(dateEl.value, shiftEl.value);
+  if(mismatchMsg){
+    dateEl.classList.add('error');
+    shiftEl.classList.add('error');
+    valid = false;
+    firstInvalid = firstInvalid || dateEl;
+  }
+
   if(!valid){
-    document.getElementById('errorBanner').classList.add('show');
+    const generic = 'Please complete the highlighted fields before submitting.';
+    const banner = document.getElementById('errorBanner');
+    banner.textContent = mismatchMsg ? (hadOtherErrors ? generic + ' ' + mismatchMsg : mismatchMsg) : generic;
+    banner.classList.add('show');
     if(firstInvalid) firstInvalid.scrollIntoView({behavior:'smooth', block:'center'});
   }
 
