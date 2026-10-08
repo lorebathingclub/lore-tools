@@ -121,6 +121,8 @@
             <option value="">Select...</option>
             <option value="AM">AM</option>
             <option value="PM">PM</option>
+            <option value="Closing Standard">Closing: Standard</option>
+            <option value="Closing Deep Clean">Closing: Deep Clean (Mon/Thu)</option>
           </select>
         </div>
       </div>
@@ -306,30 +308,6 @@ const sectionsByShift = {
   ]
 };
 
-// Closing shifts are picked by day of week; the checklist type follows from the day.
-const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-const DEEP_CLEAN_DAYS = ['Monday','Thursday'];
-
-(function addClosingOptions(){
-  const sel = document.getElementById('shift');
-  DAYS.forEach(day=>{
-    const opt = document.createElement('option');
-    opt.value = 'Closing ' + day;
-    opt.textContent = 'Closing: ' + day + (DEEP_CLEAN_DAYS.includes(day) ? ' (Deep Clean)' : '');
-    sel.appendChild(opt);
-  });
-})();
-
-// Maps the selected shift value to its checklist key and a display label.
-function resolveShift(value){
-  if(value.indexOf('Closing ') === 0){
-    const day = value.slice('Closing '.length);
-    const deep = DEEP_CLEAN_DAYS.includes(day);
-    return { key: deep ? 'Closing Deep Clean' : 'Closing Standard', label: 'Closing ' + day + (deep ? ' (Deep Clean)' : '') };
-  }
-  return { key: value, label: value };
-}
-
 let itemCount = 0;
 
 function renderSections(){
@@ -342,13 +320,12 @@ function renderSections(){
     return;
   }
 
-  const resolved = resolveShift(shift);
-  const rows = sectionsByShift[resolved.key];
+  const rows = sectionsByShift[shift];
   const card = document.createElement('div');
   card.className = 'card section';
   const titleEl = document.createElement('div');
   titleEl.className = 'section-title';
-  titleEl.innerText = resolved.label + ' Checklist';
+  titleEl.innerText = shift + ' Checklist';
   card.appendChild(titleEl);
 
   rows.forEach((row, idx)=>{
@@ -486,7 +463,7 @@ function submitForm(){
   if(!validateForm()) return;
 
   const date = document.getElementById('date').value;
-  const shift = resolveShift(document.getElementById('shift').value).label;
+  const shift = document.getElementById('shift').value;
   const manager = document.getElementById('manager').value.trim();
   const finalNotes = document.getElementById('finalNotes').value.trim();
 
