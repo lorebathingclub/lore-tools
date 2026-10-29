@@ -122,7 +122,7 @@
             <option value="AM">AM</option>
             <option value="PM">PM</option>
             <option value="Closing Standard">Closing: Standard</option>
-            <option value="Closing Deep Clean">Closing: Deep Clean (Mon/Thu)</option>
+            <option value="Closing Deep Clean">Closing: Deep Clean (Mon/Fri)</option>
           </select>
         </div>
       </div>
@@ -295,7 +295,6 @@ const sectionsByShift = {
     { type:'item', text:'Wipe down front door, locker room mirrors (glass cleaner), and sauna doors (cleaning vinegar)', indent:true },
     { type:'item', text:'Vacuum full space', indent:true },
     { type:'item', text:'Turn off lights + sconces', cond:'Turn off top and bottom panels in the boiler room, leave middle panel', indent:true },
-    { type:'item', text:'Put trash + recycling out on streets', cond:'Tuesday and Thursday', indent:true },
     { type:'item', text:'Put vacuum in pool, plug it in, and turn it on', indent:true },
     { type:'item', text:'Scrub pool deck', cond:'Capful of decon + water in buckets, scrub floor', indent:true },
     { type:'item', text:'Turn off sconces' },
@@ -412,8 +411,8 @@ function clearErrors(){
   document.getElementById('errorBanner').classList.remove('show');
 }
 
-// Deep Clean closings run Mon (1) and Thu (4); every other night is Standard.
-const DEEP_CLEAN_DOW = [1, 4];
+// Deep Clean closings run Mon (1) and Fri (5); every other night is Standard.
+const DEEP_CLEAN_DOW = [1, 5];
 const DOW_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 // Returns an error message if the chosen closing type doesn't match the date's weekday, else ''.
@@ -423,10 +422,10 @@ function dayMismatchMessage(dateStr, shiftVal){
   const dow = new Date(p[0], p[1]-1, p[2]).getDay();
   const isDeepNight = DEEP_CLEAN_DOW.includes(dow);
   if(shiftVal === 'Closing Deep Clean' && !isDeepNight){
-    return DOW_NAMES[dow] + ' is not a Deep Clean night (Mon/Thu only). Pick Closing: Standard or fix the date.';
+    return DOW_NAMES[dow] + ' is not a Deep Clean night (Mon/Fri only). Pick Closing: Standard or fix the date.';
   }
   if(shiftVal === 'Closing Standard' && isDeepNight){
-    return DOW_NAMES[dow] + ' is a Deep Clean night. Pick Closing: Deep Clean (Mon/Thu) or fix the date.';
+    return DOW_NAMES[dow] + ' is a Deep Clean night. Pick Closing: Deep Clean (Mon/Fri) or fix the date.';
   }
   return '';
 }
